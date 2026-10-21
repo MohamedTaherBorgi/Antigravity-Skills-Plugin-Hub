@@ -1,0 +1,10 @@
+{
+  "name": "skills-manager",
+  "title": "Skills & Plugin Hub",
+  "description": "Visual dashboard and manager for Antigravity skills and plugins. Inspect capabilities, toggle plugins, browse deep reference guides, and copy slash commands.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mohamed Taher Borgi"
+  },
+  "logo": "assets/logo.svg"
+}

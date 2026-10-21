@@ -1,0 +1,18 @@
+{
+  "command": "python",
+  "args": ["server.py"],
+  "restart_policy": "always",
+  "display_name": "Skills & Plugin Hub",
+  "description": "Visual dashboard to manage, inspect, search, and enable/disable Antigravity skills and plugins.",
+  "has_web_ui": true,
+  "ui_config": {
+    "display_name": "Skills Hub",
+    "views": [
+      {
+        "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE",
+        "path": "/",
+        "title": "Skills Hub"
+      }
+    ]
+  }
+}
