@@ -501,17 +501,6 @@ HTML_PAGE = r"""<!DOCTYPE html>
       gap: 8px;
     }
 
-    .brand-title .badge-pill {
-      font-size: 10px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--accent-emerald-dim);
-      color: var(--accent-emerald);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      letter-spacing: 0.03em;
-    }
-
     .brand-sub {
       font-size: 11px;
       color: var(--text-muted);
@@ -1434,7 +1423,6 @@ HTML_PAGE = r"""<!DOCTYPE html>
       <div>
         <div class="brand-title">
           Skills & Plugin Hub
-          <span class="badge-pill" id="liveStatusPill">Live :18767</span>
         </div>
         <div class="brand-sub">Manage, inspect, and toggle Antigravity agent capabilities</div>
       </div>
@@ -1597,8 +1585,6 @@ HTML_PAGE = r"""<!DOCTYPE html>
     document.getElementById("statTotalCommands").textContent = STATS.totalCommands ?? "--";
     document.getElementById("statTotalDocs").textContent = (STATS.totalReferences ?? 0) + (STATS.totalScripts ?? 0);
     document.getElementById("statScriptsBreakdown").textContent = `${STATS.totalReferences ?? 0} Markdown Guides · ${STATS.totalScripts ?? 0} Scripts`;
-    const pill = document.getElementById("liveStatusPill");
-    if (pill && STATS.serverPort) pill.textContent = `Live :${STATS.serverPort}`;
   }
 
   function setFilter(filter) {
