@@ -461,6 +461,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       gap: 20px;
+      container-type: inline-size;
     }
 
     /* Top Navigation / Brand Header */
@@ -560,13 +561,16 @@ HTML_PAGE = r"""<!DOCTYPE html>
       padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.2s ease;
+      min-width: 0;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
     .stat-card:hover {
       border-color: var(--border-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
     .stat-card::before {
       content: "";
@@ -578,17 +582,71 @@ HTML_PAGE = r"""<!DOCTYPE html>
     .stat-card.emerald::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
     .stat-card.amber::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
     .stat-card.cyan::before { background: linear-gradient(90deg, #06b6d4, #6366f1); }
+    .stat-card.purple::before { background: linear-gradient(90deg, #a855f7, #6366f1); }
 
     .stat-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+    .stat-title {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
     }
+    .stat-icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+    .stat-icon-badge svg {
+      width: 13px;
+      height: 13px;
+      display: block;
+      flex-shrink: 0;
+    }
+    .stat-card:hover .stat-icon-badge {
+      transform: scale(1.1);
+    }
+    .stat-card.emerald .stat-icon-badge {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.25);
+      color: #34d399;
+    }
+    .stat-card.cyan .stat-icon-badge {
+      background: rgba(6, 182, 212, 0.12);
+      border-color: rgba(6, 182, 212, 0.25);
+      color: #22d3ee;
+    }
+    .stat-card.amber .stat-icon-badge {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.25);
+      color: #fbbf24;
+    }
+    .stat-card.purple .stat-icon-badge,
+    .stat-card:not(.emerald):not(.cyan):not(.amber) .stat-icon-badge {
+      background: rgba(168, 85, 247, 0.12);
+      border-color: rgba(168, 85, 247, 0.25);
+      color: #c084fc;
+    }
+
     .stat-val {
       font-size: 26px;
       font-weight: 700;
@@ -599,6 +657,9 @@ HTML_PAGE = r"""<!DOCTYPE html>
     .stat-desc {
       font-size: 11px;
       color: var(--text-sub);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     /* Filter & Search Bar */
@@ -644,8 +705,15 @@ HTML_PAGE = r"""<!DOCTYPE html>
     .filter-tabs {
       display: flex;
       align-items: center;
-      gap: 4px;
-      flex-wrap: wrap;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 0;
+      max-width: 100%;
+    }
+    .filter-tabs::-webkit-scrollbar {
+      display: none;
     }
 
     .tab-chip {
@@ -657,6 +725,8 @@ HTML_PAGE = r"""<!DOCTYPE html>
       padding: 4px 10px;
       border-radius: 6px;
       cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
       transition: all 0.15s ease;
     }
     .tab-chip:hover {
@@ -794,10 +864,17 @@ HTML_PAGE = r"""<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: #a5b4fc;
       flex-shrink: 0;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .plugin-avatar svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      flex-shrink: 0;
+    }
+    .plugin-card:hover .plugin-avatar {
+      transform: scale(1.05);
     }
 
     .plugin-meta-info {
@@ -1178,14 +1255,17 @@ HTML_PAGE = r"""<!DOCTYPE html>
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 5px 8px;
+      padding: 6px 10px;
       background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 6px;
       font-size: 11px;
       gap: 10px;
+      transition: background 0.15s ease, border-color 0.15s ease;
     }
     .drawer-item:hover {
       background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .drawer-name-link {
@@ -1194,11 +1274,18 @@ HTML_PAGE = r"""<!DOCTYPE html>
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
     }
     .drawer-name-link:hover {
       color: #38bdf8;
-      text-decoration: underline;
+    }
+    .drawer-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
     /* Empty state */
@@ -1399,13 +1486,97 @@ HTML_PAGE = r"""<!DOCTYPE html>
     .toast.success { border-color: rgba(16, 185, 129, 0.4); color: #34d399; }
     .toast.error { border-color: rgba(244, 63, 94, 0.4); color: #fb7185; }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      .container { padding: 12px 10px 60px 10px; }
-      .bento-stats { grid-template-columns: 1fr 1fr; }
-      .plugin-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .plugin-title-area { flex: 0 0 auto; width: 100%; }
-      .plugin-header-actions { width: 100%; justify-content: space-between; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    /* Responsive & Container Queries */
+    @container (max-width: 520px) {
+      .bento-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .stat-card {
+        padding: 10px 12px;
+      }
+      .stat-title {
+        font-size: 10px;
+      }
+      .stat-val {
+        font-size: 20px;
+      }
+      .stat-desc {
+        font-size: 10px;
+      }
+      .stat-icon-badge {
+        width: 22px;
+        height: 22px;
+      }
+      .stat-icon-badge svg {
+        width: 11px;
+        height: 11px;
+      }
+    }
+
+    @container (max-width: 330px) {
+      .bento-stats {
+        grid-template-columns: 1fr;
+      }
+      .toolbar {
+        padding: 8px 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .bento-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 12px 10px 60px 10px;
+      }
+      .bento-stats {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .stat-card {
+        padding: 12px 14px;
+      }
+      .stat-val {
+        font-size: 22px;
+      }
+      .toolbar {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .search-box {
+        flex: 1 1 100%;
+      }
+      .bulk-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .bulk-actions .btn {
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+      }
+      .plugin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .plugin-title-area {
+        width: 100%;
+      }
+      .plugin-header-actions {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .modal-body {
+        padding: 14px 16px;
+      }
     }
   </style>
 </head>
@@ -1448,8 +1619,10 @@ HTML_PAGE = r"""<!DOCTYPE html>
   <section class="bento-stats">
     <div class="stat-card emerald">
       <div class="stat-label">
-        <span>Installed Plugins</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span class="stat-title">Installed Plugins</span>
+        <div class="stat-icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+        </div>
       </div>
       <div class="stat-val" id="statTotalPlugins">--</div>
       <div class="stat-desc" id="statPluginBreakdown">-- Active · -- Disabled</div>
@@ -1457,8 +1630,10 @@ HTML_PAGE = r"""<!DOCTYPE html>
 
     <div class="stat-card cyan">
       <div class="stat-label">
-        <span>Active Skills</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span class="stat-title">Active Skills</span>
+        <div class="stat-icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
       </div>
       <div class="stat-val" id="statTotalSkills">--</div>
       <div class="stat-desc">Custom & Official Playbooks</div>
@@ -1466,17 +1641,21 @@ HTML_PAGE = r"""<!DOCTYPE html>
 
     <div class="stat-card amber">
       <div class="stat-label">
-        <span>Slash Commands</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span class="stat-title">Slash Commands</span>
+        <div class="stat-icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
       </div>
       <div class="stat-val" id="statTotalCommands">--</div>
       <div class="stat-desc">One-click copy to prompt</div>
     </div>
 
-    <div class="stat-card">
+    <div class="stat-card purple">
       <div class="stat-label">
-        <span>Reference Guides & Scripts</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span class="stat-title">Guides & Scripts</span>
+        <div class="stat-icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
       </div>
       <div class="stat-val" id="statTotalDocs">--</div>
       <div class="stat-desc" id="statScriptsBreakdown">-- Markdown Guides · -- Scripts</div>
@@ -1633,6 +1812,93 @@ HTML_PAGE = r"""<!DOCTYPE html>
     return matchesName || matchesDesc || matchesSkills;
   }
 
+  const PLUGIN_ICONS = {
+    "cybersecurity-suite": {
+      bg: "rgba(239, 68, 68, 0.12)",
+      color: "#f87171",
+      border: "rgba(239, 68, 68, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+    },
+    "superpowers": {
+      bg: "rgba(245, 158, 11, 0.12)",
+      color: "#fbbf24",
+      border: "rgba(245, 158, 11, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`
+    },
+    "ui-design": {
+      bg: "rgba(236, 72, 153, 0.12)",
+      color: "#f472b6",
+      border: "rgba(236, 72, 153, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>`
+    },
+    "document-skills": {
+      bg: "rgba(59, 130, 246, 0.12)",
+      color: "#60a5fa",
+      border: "rgba(59, 130, 246, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+    },
+    "exam-prep": {
+      bg: "rgba(16, 185, 129, 0.12)",
+      color: "#34d399",
+      border: "rgba(16, 185, 129, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`
+    },
+    "prompt-optimizer": {
+      bg: "rgba(245, 158, 11, 0.12)",
+      color: "#fbbf24",
+      border: "rgba(245, 158, 11, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>`
+    },
+    "usage-monitor": {
+      bg: "rgba(20, 184, 166, 0.12)",
+      color: "#2dd4bf",
+      border: "rgba(20, 184, 166, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`
+    },
+    "translator": {
+      bg: "rgba(14, 165, 233, 0.12)",
+      color: "#38bdf8",
+      border: "rgba(14, 165, 233, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`
+    },
+    "skills-manager": {
+      bg: "rgba(99, 102, 241, 0.15)",
+      color: "#a5b4fc",
+      border: "rgba(99, 102, 241, 0.35)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`
+    },
+    "gemini-api": {
+      bg: "rgba(168, 85, 247, 0.12)",
+      color: "#c084fc",
+      border: "rgba(168, 85, 247, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+    },
+    "google-antigravity-sdk": {
+      bg: "rgba(6, 182, 212, 0.12)",
+      color: "#22d3ee",
+      border: "rgba(6, 182, 212, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`
+    },
+    "modern-web-guidance-plugin": {
+      bg: "rgba(16, 185, 129, 0.12)",
+      color: "#34d399",
+      border: "rgba(16, 185, 129, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`
+    }
+  };
+
+  function getPluginIcon(pluginId, title, name) {
+    if (PLUGIN_ICONS[pluginId]) {
+      return PLUGIN_ICONS[pluginId];
+    }
+    return {
+      bg: "rgba(99, 102, 241, 0.1)",
+      color: "#a5b4fc",
+      border: "rgba(99, 102, 241, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`
+    };
+  }
+
   function renderPlugins() {
     // Preserve any open drawers
     const openDrawers = new Set(
@@ -1653,7 +1919,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
     }
 
     container.innerHTML = filtered.map(p => {
-      const iconLetter = p.title ? p.title.charAt(0).toUpperCase() : p.name.charAt(0).toUpperCase();
+      const iconMeta = getPluginIcon(p.id, p.title, p.name);
 
       const skillsHtml = p.skills.map(s => {
         // Render all command chips
@@ -1678,14 +1944,16 @@ HTML_PAGE = r"""<!DOCTYPE html>
 
         const scriptsPill = s.scriptsCount > 0 ? `
           <div class="scripts-pill" onclick="toggleDrawer('${p.id}-${s.name}-scripts')" title="View bundled scripts">
-            ⚡ ${s.scriptsCount} Scripts
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            ${s.scriptsCount} Scripts
           </div>
         ` : '';
 
         const guidesList = (s.references || []).map(r => `
           <div class="drawer-item">
             <span class="drawer-name-link" data-doc="${escapeHtml(r.relativePath)}" data-title="${escapeHtml(r.title)}" onclick="openDoc(this.dataset.doc, this.dataset.title)">
-              📄 ${escapeHtml(r.title)} <span style="color:#64748b; font-size:10px;">(${escapeHtml(r.name)})</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; color:#38bdf8;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span class="drawer-text">${escapeHtml(r.title)} <span style="color:#64748b; font-size:10px;">(${escapeHtml(r.name)})</span></span>
             </span>
             <button class="btn btn-sm" data-doc="${escapeHtml(r.relativePath)}" data-title="${escapeHtml(r.title)}" onclick="openDoc(this.dataset.doc, this.dataset.title)">Read</button>
           </div>
@@ -1694,7 +1962,8 @@ HTML_PAGE = r"""<!DOCTYPE html>
         const scriptsList = (s.scripts || []).map(sc => `
           <div class="drawer-item">
             <span class="drawer-name-link" data-doc="${escapeHtml(sc.relativePath)}" data-title="${escapeHtml(sc.name)}" onclick="openDoc(this.dataset.doc, this.dataset.title)">
-              ⚡ ${escapeHtml(sc.name)} <span style="color:#64748b; font-size:10px;">(${(sc.sizeBytes / 1024).toFixed(1)} KB)</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; color:#a5b4fc;"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span class="drawer-text">${escapeHtml(sc.name)} <span style="color:#64748b; font-size:10px;">(${(sc.sizeBytes / 1024).toFixed(1)} KB)</span></span>
             </span>
             <button class="btn btn-sm" data-doc="${escapeHtml(sc.relativePath)}" data-title="${escapeHtml(sc.name)}" onclick="openDoc(this.dataset.doc, this.dataset.title)">View Script</button>
           </div>
@@ -1779,7 +2048,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
         <article class="plugin-card ${p.enabled ? '' : 'is-disabled'} ${p.isHost ? 'is-host' : ''} ${isOpen ? 'is-open' : 'is-collapsed'}" id="card-${p.id}">
           <div class="plugin-header" onclick="togglePluginDetails('${p.id}')">
             <div class="plugin-title-area">
-              <div class="plugin-avatar">${iconLetter}</div>
+              <div class="plugin-avatar" style="background:${iconMeta.bg}; color:${iconMeta.color}; border-color:${iconMeta.border};">${iconMeta.svg}</div>
               <div class="plugin-meta-info">
                 <div class="plugin-title-row">
                   <span class="plugin-title">${escapeHtml(p.title)}</span>
