@@ -1,75 +1,78 @@
-import re
-import json
+import sys
 from pathlib import Path
 
-PLUGINS_DIR = Path(r"C:\Users\medta\.gemini\config\plugins")
+# Add sidecars/skills-manager to sys.path so we test actual production code
+REPO_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str((REPO_ROOT / "sidecars" / "skills-manager").resolve()))
 
-def test_parse():
-    for p in sorted(PLUGINS_DIR.iterdir()):
-        if not p.is_dir() or p.name.startswith("."):
-            continue
-        skills_dir = p / "skills"
-        if not skills_dir.is_dir():
-            continue
-        for s in skills_dir.iterdir():
-            sm = s / "SKILL.md"
-            if not sm.is_file():
-                continue
-            content = sm.read_text(encoding="utf-8")
-            fm_match = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)$", content, re.DOTALL)
-            fm_raw, body_text = fm_match.groups() if fm_match else ("", content)
+from server import parse_skill_file, scan_plugins_and_skills, PLUGINS_DIR
 
-            fm_name = s.name
-            for line in fm_raw.splitlines():
-                if line.startswith("name:"):
-                    fm_name = line.split("name:", 1)[1].strip()
-                    break
 
-            desc_m = re.search(r"description:\s*(?:>-|>|\|-|\||\"|')?\s*(.*?)(?=\n[a-z0-9_-]+:|\Z)", fm_raw, re.DOTALL)
-            fm_desc = " ".join(desc_m.group(1).strip().split()) if desc_m else ""
-            fm_desc = fm_desc.strip('"\'')
+def test_parse_skills():
+    print("--- Running test_parse_skills against server.py ---")
+    data = scan_plugins_and_skills()
+    plugins = data["plugins"]
+    stats = data["stats"]
 
-            # Slash commands
-            detected_commands = []
-            for m in re.finditer(r'["\'](/[\w-]+)["\']', fm_desc):
-                c = m.group(1)
-                if not c.startswith(('/usr', '/etc', '/bin', '/var', '/tmp', '/dev')):
-                    if c not in detected_commands:
-                        detected_commands.append(c)
+    assert len(plugins) == 13, f"Expected 13 plugins, found {len(plugins)}"
+    assert stats["totalPlugins"] == 13
+    assert stats["totalSkills"] == 15
 
-            # Check title or slash sections
-            for m in re.finditer(r'(?:Quick Slash Command|Slash Command|Trigger on|Quick Command)[s]?:\s*(/[\w-]+)', body_text, re.IGNORECASE):
-                c = m.group(1)
-                if c not in detected_commands:
-                    detected_commands.append(c)
+    # Map skills by name
+    all_skills = {}
+    for p in plugins:
+        for s in p["skills"]:
+            all_skills[s["name"]] = s
 
-            KNOWN = {
-                "pentest": ["/pentest"],
-                "superpowers": ["/superpowers"],
-                "ui-design": ["/ui-design"],
-                "documents": ["/documents"],
-                "exam-prep": ["/exam-prep"],
-                "prompt-optimizer": ["/prompt-optimizer"],
-                "usage-stats": ["/usage-stats"],
-                "skills-manager": ["/skills", "/skills-manager"],
-                "creative-motion": ["/motion", "/creative-motion"]
-            }
-            if fm_name in KNOWN:
-                for c in KNOWN[fm_name]:
-                    if c not in detected_commands:
-                        detected_commands.append(c)
+    # 1. Assert creative-motion
+    assert "creative-motion" in all_skills, "creative-motion skill missing!"
+    cm = all_skills["creative-motion"]
+    assert cm["name"] == "creative-motion"
+    assert "/motion" in cm["commandTriggers"], f"Expected /motion in {cm['commandTriggers']}"
+    assert "/creative-motion" in cm["commandTriggers"], f"Expected /creative-motion in {cm['commandTriggers']}"
+    assert cm["triggerType"] == "Hybrid (Slash & Auto)", f"Expected Hybrid, got {cm['triggerType']}"
+    assert cm["referencesCount"] == 3, f"Expected 3 references, got {cm['referencesCount']}"
+    ref_names = [r["name"] for r in cm["references"]]
+    assert "micro-interactions.md" in ref_names
+    assert "gsap-cinematic-scroll.md" in ref_names
+    assert "shaders-and-backgrounds.md" in ref_names
+    print("[OK] creative-motion parsed accurately with /motion, /creative-motion and 3 references")
 
-            has_slash = len(detected_commands) > 0
-            has_auto = any(k in fm_desc.lower() for k in ["trigger", "whenever", "intent", "use when", "activate", "mentions of"])
+    # 2. Assert skills-manager
+    sm = all_skills["skills-manager"]
+    assert "/skills" in sm["commandTriggers"]
+    assert "/skills-manager" in sm["commandTriggers"]
+    assert sm["triggerType"] == "Hybrid (Slash & Auto)"
+    print("[OK] skills-manager parsed accurately")
 
-            if has_slash and has_auto:
-                tt = "Hybrid (Slash & Auto)"
-            elif has_slash:
-                tt = "Slash Command"
-            else:
-                tt = "Auto-Activated"
+    # 3. Assert superpowers & pentest
+    sp = all_skills["superpowers"]
+    assert "/superpowers" in sp["commandTriggers"]
+    pt = all_skills["pentest"]
+    assert "/pentest" in pt["commandTriggers"]
+    print("[OK] superpowers and pentest parsed accurately")
 
-            print(f"{fm_name:24} | {tt:22} | {detected_commands}")
+    # 4. Assert chrome-extensions (Auto-Activated)
+    ce = all_skills["chrome-extensions"]
+    assert ce["commandTriggers"] == []
+    assert ce["triggerType"] == "Auto-Activated"
+    print("[OK] chrome-extensions correctly classified as Auto-Activated")
+
+    # 5. Check schema integrity across all 15 skills
+    required_keys = {
+        "name", "displayName", "description", "slashCommand",
+        "commandTriggers", "triggerType", "referencesCount",
+        "references", "scriptsCount", "scripts", "path",
+        "relativePath", "skillMdRelative"
+    }
+    for name, s in all_skills.items():
+        missing = required_keys - set(s.keys())
+        assert not missing, f"Skill {name} missing keys: {missing}"
+        assert s["name"] and s["displayName"] and s["description"], f"Skill {name} has empty fields"
+        print(f"  - {s['name']:24} | {s['triggerType']:22} | {s['commandTriggers']}")
+
+    print("\nAll skill parser assertions passed!")
+
 
 if __name__ == "__main__":
-    test_parse()
+    test_parse_skills()

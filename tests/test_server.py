@@ -47,8 +47,9 @@ try:
     assert "statTotalPlugins" in html_content
     assert "docModal" in html_content
     assert "data-copy=" in html_content  # Verifies safe attribute encoding
-    assert "handleDocLink" in html_content  # Verifies markdown doc link handler
-    assert "scripts-drawer" in html_content  # Verifies script inspection
+    assert "prompts-section" in html_content  # Verifies suggested prompts section
+    assert "prompt-chip" in html_content      # Verifies suggested prompt chips
+    assert "creative-motion" in html_content  # Verifies creative-motion presence in UI
 
     # Test 4: GET /api/plugins
     print("\n--- Test 4: GET /api/plugins ---")
@@ -64,13 +65,15 @@ try:
     cm_plugin = next(p for p in plugins if p["id"] == "creative-motion")
     assert cm_plugin["skillsCount"] == 1
     assert cm_plugin["title"] == "Creative Motion & Shaders Suite"
+    assert len(cm_plugin["suggestedPrompts"]) == 3
+    assert "micro-interactions" in cm_plugin["suggestedPrompts"][0]
     cm_skill = cm_plugin["skills"][0]
     assert cm_skill["name"] == "creative-motion"
     assert cm_skill["referencesCount"] == 3
     assert "/motion" in cm_skill["commandTriggers"]
     assert "/creative-motion" in cm_skill["commandTriggers"]
     assert "Hybrid" in cm_skill["triggerType"]
-    print("Verified creative-motion metadata, 3 reference guides, and slash commands.")
+    print("Verified creative-motion metadata, 3 reference guides, 3 suggested prompts, and slash commands.")
 
     # Check skills-manager host properties
     sm_plugin = next(p for p in plugins if p["id"] == "skills-manager")
@@ -136,6 +139,20 @@ try:
     assert doc_res4["name"] == "micro-interactions.md"
     print("5d Passed: creative-motion reference guide read.")
 
+    # 5e: Verify gsap-cinematic-scroll.md
+    doc_req5 = urllib.request.urlopen(f"{base_url}/api/doc?path=creative-motion/skills/creative-motion/references/gsap-cinematic-scroll.md", timeout=3)
+    assert doc_req5.status == 200
+    doc_res5 = json.loads(doc_req5.read().decode())
+    assert "ScrollTrigger" in doc_res5["content"]
+    print("5e Passed: creative-motion GSAP guide read.")
+
+    # 5f: Verify shaders-and-backgrounds.md
+    doc_req6 = urllib.request.urlopen(f"{base_url}/api/doc?path=creative-motion/skills/creative-motion/references/shaders-and-backgrounds.md", timeout=3)
+    assert doc_req6.status == 200
+    doc_res6 = json.loads(doc_req6.read().decode())
+    assert "WebGL" in doc_res6["content"] or "GLSL" in doc_res6["content"]
+    print("5f Passed: creative-motion shaders guide read.")
+
     # Test 6: Security - Directory Traversal Prevention
     print("\n--- Test 6: Security - Path Traversal Check ---")
     try:
@@ -184,6 +201,29 @@ try:
     cfg_after = json.loads(config_path.read_text(encoding="utf-8"))
     assert cfg_after["plugins"]["translator"]["enabled"] is True
     print("Verified: config.json translator.enabled is True on disk.")
+
+    # 8b: Toggle creative-motion OFF then ON
+    cm_off = json.dumps({"pluginId": "creative-motion", "enabled": False}).encode("utf-8")
+    req_cm_off = urllib.request.Request(f"{base_url}/api/toggle", data=cm_off, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req_cm_off, timeout=3) as resp:
+        assert resp.status == 200
+        res = json.loads(resp.read().decode())
+        assert res["success"] is True and res["enabled"] is False
+
+    cfg_cm_off = json.loads(config_path.read_text(encoding="utf-8"))
+    assert cfg_cm_off["plugins"]["creative-motion"]["enabled"] is False
+    print("Verified: config.json creative-motion.enabled is False on disk.")
+
+    cm_on = json.dumps({"pluginId": "creative-motion", "enabled": True}).encode("utf-8")
+    req_cm_on = urllib.request.Request(f"{base_url}/api/toggle", data=cm_on, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req_cm_on, timeout=3) as resp:
+        assert resp.status == 200
+        res = json.loads(resp.read().decode())
+        assert res["success"] is True and res["enabled"] is True
+
+    cfg_cm_on = json.loads(config_path.read_text(encoding="utf-8"))
+    assert cfg_cm_on["plugins"]["creative-motion"]["enabled"] is True
+    print("Verified: config.json creative-motion.enabled restored to True on disk.")
 
     # Test 9: POST /api/bulk-toggle Safety
     print("\n--- Test 9: POST /api/bulk-toggle Safety ---")

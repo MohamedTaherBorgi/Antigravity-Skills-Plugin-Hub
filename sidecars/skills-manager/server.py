@@ -1289,6 +1289,65 @@ HTML_PAGE = r"""<!DOCTYPE html>
       min-width: 0;
     }
 
+    /* Suggested Prompts Section */
+    .prompts-section {
+      background: var(--card-inner);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .prompts-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 6px;
+    }
+    .prompts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .prompt-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      font-size: 11.5px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      user-select: none;
+    }
+    .prompt-chip:hover {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.35);
+      color: #fff;
+      transform: translateX(2px);
+    }
+    .prompt-chip svg {
+      flex-shrink: 0;
+      color: #818cf8;
+    }
+    .prompt-text {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     /* Empty state */
     .empty-state {
       text-align: center;
@@ -1801,6 +1860,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
 
     const matchesName = p.name.toLowerCase().includes(query) || p.title.toLowerCase().includes(query);
     const matchesDesc = (p.description || "").toLowerCase().includes(query);
+    const matchesPrompts = (p.suggestedPrompts || []).some(pr => pr.toLowerCase().includes(query));
     const matchesSkills = p.skills.some(s =>
       s.name.toLowerCase().includes(query) ||
       (s.displayName || "").toLowerCase().includes(query) ||
@@ -1810,7 +1870,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
       (s.scripts || []).some(sc => sc.name.toLowerCase().includes(query))
     );
 
-    return matchesName || matchesDesc || matchesSkills;
+    return matchesName || matchesDesc || matchesPrompts || matchesSkills;
   }
 
   const PLUGIN_ICONS = {
@@ -2093,6 +2153,23 @@ HTML_PAGE = r"""<!DOCTYPE html>
             <div class="plugin-description">${escapeHtml(p.description || 'No description provided.')}</div>
 
             ${sidecarsHtml}
+
+            ${(p.suggestedPrompts && p.suggestedPrompts.length > 0) ? `
+              <div class="prompts-section">
+                <div class="prompts-header-bar">
+                  <span>Suggested Prompts</span>
+                  <span>${p.suggestedPrompts.length} Prompts</span>
+                </div>
+                <div class="prompts-list">
+                  ${p.suggestedPrompts.map(pr => `
+                    <div class="prompt-chip" data-copy="${escapeHtml(pr)}" onclick="copyText(this.dataset.copy, 'Copied prompt to clipboard!')" title="Click to copy prompt">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <span class="prompt-text">${escapeHtml(pr)}</span>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+            ` : ''}
 
             ${p.skillsCount > 0 ? `
               <div class="skills-section">
