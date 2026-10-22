@@ -166,6 +166,7 @@ def parse_skill_file(skill_dir: Path, skill_md: Path, plugin_id: str) -> dict:
         "prompt-optimizer": ["/prompt-optimizer"],
         "usage-stats": ["/usage-stats"],
         "skills-manager": ["/skills", "/skills-manager"],
+        "creative-motion": ["/motion", "/creative-motion"],
     }
     if fm_name in KNOWN_COMMANDS:
         for c in KNOWN_COMMANDS[fm_name]:
@@ -1818,6 +1819,12 @@ HTML_PAGE = r"""<!DOCTYPE html>
       color: "#f87171",
       border: "rgba(239, 68, 68, 0.25)",
       svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+    },
+    "creative-motion": {
+      bg: "rgba(244, 63, 94, 0.12)",
+      color: "#fb7185",
+      border: "rgba(244, 63, 94, 0.25)",
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c4 0 6-8 10-8s4 5 7 5"/><path d="M4 20c5 0 8-8 11-8s3 3 6 3"/><path d="M17 3l1.5 3.5L22 8l-3.5 1.5L17 13l-1.5-3.5L12 8l3.5-1.5Z"/></svg>`
     },
     "superpowers": {
       bg: "rgba(245, 158, 11, 0.12)",

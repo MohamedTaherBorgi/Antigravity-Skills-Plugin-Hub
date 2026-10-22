@@ -58,8 +58,19 @@ try:
     plugins = plugins_data["plugins"]
     stats = plugins_data["stats"]
     print(f"Total plugins scanned: {len(plugins)}")
-    print("Stats:", stats)
-    assert len(plugins) == 12
+    assert len(plugins) == 13
+
+    # Check creative-motion plugin and skill properties
+    cm_plugin = next(p for p in plugins if p["id"] == "creative-motion")
+    assert cm_plugin["skillsCount"] == 1
+    assert cm_plugin["title"] == "Creative Motion & Shaders Suite"
+    cm_skill = cm_plugin["skills"][0]
+    assert cm_skill["name"] == "creative-motion"
+    assert cm_skill["referencesCount"] == 3
+    assert "/motion" in cm_skill["commandTriggers"]
+    assert "/creative-motion" in cm_skill["commandTriggers"]
+    assert "Hybrid" in cm_skill["triggerType"]
+    print("Verified creative-motion metadata, 3 reference guides, and slash commands.")
 
     # Check skills-manager host properties
     sm_plugin = next(p for p in plugins if p["id"] == "skills-manager")
@@ -116,6 +127,14 @@ try:
     doc_res3 = json.loads(doc_req3.read().decode())
     assert doc_res3["name"] == "windows-ad-pentesting.md"
     print("5c Passed: Relative path with baseDirHint handled.")
+
+    # 5d: Verify creative-motion reference guide reading
+    doc_req4 = urllib.request.urlopen(f"{base_url}/api/doc?path=creative-motion/skills/creative-motion/references/micro-interactions.md", timeout=3)
+    assert doc_req4.status == 200
+    doc_res4 = json.loads(doc_req4.read().decode())
+    assert "Emil Kowalski" in doc_res4["content"]
+    assert doc_res4["name"] == "micro-interactions.md"
+    print("5d Passed: creative-motion reference guide read.")
 
     # Test 6: Security - Directory Traversal Prevention
     print("\n--- Test 6: Security - Path Traversal Check ---")

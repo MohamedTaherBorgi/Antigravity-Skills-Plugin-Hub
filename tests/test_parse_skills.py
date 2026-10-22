@@ -51,7 +51,8 @@ def test_parse():
                 "exam-prep": ["/exam-prep"],
                 "prompt-optimizer": ["/prompt-optimizer"],
                 "usage-stats": ["/usage-stats"],
-                "skills-manager": ["/skills", "/skills-manager"]
+                "skills-manager": ["/skills", "/skills-manager"],
+                "creative-motion": ["/motion", "/creative-motion"]
             }
             if fm_name in KNOWN:
                 for c in KNOWN[fm_name]:
