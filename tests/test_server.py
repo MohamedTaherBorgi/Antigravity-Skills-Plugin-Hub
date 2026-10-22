@@ -70,8 +70,7 @@ try:
     cm_skill = cm_plugin["skills"][0]
     assert cm_skill["name"] == "creative-motion"
     assert cm_skill["referencesCount"] == 3
-    assert "/motion" in cm_skill["commandTriggers"]
-    assert "/creative-motion" in cm_skill["commandTriggers"]
+    assert cm_skill["commandTriggers"] == ["/creative-motion"]
     assert "Hybrid" in cm_skill["triggerType"]
     print("Verified creative-motion metadata, 3 reference guides, 3 suggested prompts, and slash commands.")
 

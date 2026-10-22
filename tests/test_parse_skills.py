@@ -28,15 +28,14 @@ def test_parse_skills():
     assert "creative-motion" in all_skills, "creative-motion skill missing!"
     cm = all_skills["creative-motion"]
     assert cm["name"] == "creative-motion"
-    assert "/motion" in cm["commandTriggers"], f"Expected /motion in {cm['commandTriggers']}"
-    assert "/creative-motion" in cm["commandTriggers"], f"Expected /creative-motion in {cm['commandTriggers']}"
+    assert cm["commandTriggers"] == ["/creative-motion"], f"Expected ['/creative-motion'], got {cm['commandTriggers']}"
     assert cm["triggerType"] == "Hybrid (Slash & Auto)", f"Expected Hybrid, got {cm['triggerType']}"
     assert cm["referencesCount"] == 3, f"Expected 3 references, got {cm['referencesCount']}"
     ref_names = [r["name"] for r in cm["references"]]
     assert "micro-interactions.md" in ref_names
     assert "gsap-cinematic-scroll.md" in ref_names
     assert "shaders-and-backgrounds.md" in ref_names
-    print("[OK] creative-motion parsed accurately with /motion, /creative-motion and 3 references")
+    print("[OK] creative-motion parsed accurately with /creative-motion and 3 references")
 
     # 2. Assert skills-manager
     sm = all_skills["skills-manager"]

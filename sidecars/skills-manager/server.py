@@ -166,7 +166,7 @@ def parse_skill_file(skill_dir: Path, skill_md: Path, plugin_id: str) -> dict:
         "prompt-optimizer": ["/prompt-optimizer"],
         "usage-stats": ["/usage-stats"],
         "skills-manager": ["/skills", "/skills-manager"],
-        "creative-motion": ["/motion", "/creative-motion"],
+        "creative-motion": ["/creative-motion"],
     }
     if fm_name in KNOWN_COMMANDS:
         for c in KNOWN_COMMANDS[fm_name]:
