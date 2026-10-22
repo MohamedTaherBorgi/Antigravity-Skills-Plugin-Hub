@@ -527,12 +527,16 @@ HTML_PAGE = r"""<!DOCTYPE html>
       border: 1px solid var(--border);
       background: var(--card-bg);
       color: var(--text-main);
-      transition: all 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
       text-decoration: none;
     }
     .btn:hover {
       background: #1e293b;
       border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .btn:active {
+      transform: translateY(0) scale(0.97);
     }
     .btn-primary {
       background: var(--primary);
@@ -541,6 +545,10 @@ HTML_PAGE = r"""<!DOCTYPE html>
     }
     .btn-primary:hover {
       background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active {
+      transform: translateY(0) scale(0.97);
     }
     .btn-sm {
       padding: 4px 8px;
@@ -566,12 +574,15 @@ HTML_PAGE = r"""<!DOCTYPE html>
       position: relative;
       overflow: hidden;
       min-width: 0;
-      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      transition: border-color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
     }
     .stat-card:hover {
       border-color: var(--border-hover);
       transform: translateY(-1px);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+    .stat-card:active {
+      transform: scale(0.99);
     }
     .stat-card::before {
       content: "";
@@ -728,11 +739,14 @@ HTML_PAGE = r"""<!DOCTYPE html>
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
-      transition: all 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
     .tab-chip:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.05);
+    }
+    .tab-chip:active {
+      transform: scale(0.96);
     }
     .tab-chip.active {
       background: rgba(99, 102, 241, 0.15);
@@ -823,9 +837,12 @@ HTML_PAGE = r"""<!DOCTYPE html>
       justify-content: center;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
       flex-shrink: 0;
       padding: 0;
+    }
+    .expand-chevron:active {
+      transform: scale(0.92);
     }
     .plugin-card:hover .expand-chevron {
       color: #fff;
@@ -978,7 +995,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
       background-color: #334155;
-      transition: 0.25s;
+      transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
       border-radius: 24px;
     }
     .slider:before {
@@ -989,7 +1006,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
       left: 3px;
       bottom: 3px;
       background-color: white;
-      transition: 0.25s;
+      transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
       border-radius: 50%;
     }
     input:checked + .slider {
@@ -1114,7 +1131,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease;
       user-select: none;
     }
     .command-chip:hover {
@@ -1123,7 +1140,7 @@ HTML_PAGE = r"""<!DOCTYPE html>
       transform: translateY(-1px);
     }
     .command-chip:active {
-      transform: translateY(0);
+      transform: translateY(0) scale(0.96);
     }
 
     .trigger-badge {
@@ -1202,10 +1219,14 @@ HTML_PAGE = r"""<!DOCTYPE html>
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease;
     }
     .guides-pill:hover {
       background: rgba(6, 182, 212, 0.2);
+      transform: translateY(-1px);
+    }
+    .guides-pill:active {
+      transform: translateY(0) scale(0.96);
     }
 
     .scripts-pill {
@@ -1220,10 +1241,14 @@ HTML_PAGE = r"""<!DOCTYPE html>
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease;
     }
     .scripts-pill:hover {
       background: rgba(99, 102, 241, 0.22);
+      transform: translateY(-1px);
+    }
+    .scripts-pill:active {
+      transform: translateY(0) scale(0.96);
     }
 
     /* Sub-Guides / Scripts Drawers inside Skill */
@@ -1335,6 +1360,9 @@ HTML_PAGE = r"""<!DOCTYPE html>
       border-color: rgba(99, 102, 241, 0.35);
       color: #fff;
       transform: translateX(2px);
+    }
+    .prompt-chip:active {
+      transform: translateX(1px) scale(0.98);
     }
     .prompt-chip svg {
       flex-shrink: 0;
@@ -1533,14 +1561,14 @@ HTML_PAGE = r"""<!DOCTYPE html>
       align-items: center;
       gap: 8px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-      transform: translateY(80px);
+      transform: translateY(20px) scale(0.92);
       opacity: 0;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
       z-index: 10000;
       pointer-events: none;
     }
     .toast.show {
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
       opacity: 1;
     }
     .toast.success { border-color: rgba(16, 185, 129, 0.4); color: #34d399; }
@@ -1666,12 +1694,6 @@ HTML_PAGE = r"""<!DOCTYPE html>
         </svg>
         Refresh
       </button>
-      <a class="btn btn-sm" href="/" target="_blank" title="Open full tab in browser">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
-        </svg>
-        Aux View
-      </a>
     </div>
   </header>
 
